@@ -1,0 +1,56 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch
+  namespace: elasticstack
+  labels:
+    app: elasticsearch
+spec:
+  version: 7.10.0
+  nodeSets:
+    - name: master
+      count: 1
+      config:
+        node.store.allow_mmap: false
+        xpack.security.authc:
+          anonymous:
+            username: anonymous
+            roles: superuser
+            authz_exception: false
+      podTemplate:
+        metadata:
+          labels:
+            app: elasticsearch
+        spec:
+          volumes:
+            - name: elasticsearch-storage
+              persistentVolumeClaim:
+                claimName: elasticsearch-claim
+          containers:
+            - name: elasticsearch
+              envFrom:
+                - configMapRef:
+                    name: elasticsearch-config
+              volumeMounts:
+                - name: elasticsearch-storage
+                  mountPath: /usr/share/elasticsearch/data
+              resources:
+                requests:
+                  memory: 512M
+                  cpu: 0.25
+                limits:
+                  memory: 1G
+                  cpu: 0.5
+  http:
+    service:
+      spec:
+        type: NodePort
+        ports:
+          - name: client
+            protocol: TCP
+            port: 9200
+            targetPort: 9200
+            nodePort: 30200
+    tls:
+      selfSignedCertificate:
+        disabled: true

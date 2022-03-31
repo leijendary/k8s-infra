@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-volume
+  labels:
+    type: local
+spec:
+  storageClassName: ""
+  claimRef:
+    name: elasticsearch-claim
+    namespace: elasticstack
+  volumeMode: Filesystem
+  capacity:
+    storage: 1G
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /Volumes/Kubernetes/elasticsearch
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - docker-desktop
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-claim
+  namespace: elasticstack
+spec:
+  storageClassName: ""
+  volumeName: elasticsearch-volume
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1G

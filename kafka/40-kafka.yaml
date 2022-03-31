@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  namespace: kafka
+  labels:
+    app: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+  serviceName: kafka-service
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      volumes:
+        - name: kafka-storage
+          persistentVolumeClaim:
+            claimName: kafka-claim
+      containers:
+        - name: kafka
+          image: jleijendekker/kafka:1.1.0
+          ports:
+            - containerPort: 9092
+            - containerPort: 9093
+            - containerPort: 30092
+          envFrom:
+            - configMapRef:
+                name: kafka-config
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - kafka-broker-api-versions.sh --bootstrap-server=localhost:9092
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 60
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - kafka-broker-api-versions.sh --bootstrap-server=localhost:9092
+            initialDelaySeconds: 70
+            timeoutSeconds: 30
+            periodSeconds: 60
+            failureThreshold: 3
+            successThreshold: 1
+          volumeMounts:
+            - name: kafka-storage
+              mountPath: /var/lib/kafka/data
+          resources:
+            requests:
+              memory: 512M
+              cpu: 0.25
+            limits:
+              memory: 512M
+              cpu: 0.25
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+  namespace: kafka
+spec:
+  selector:
+    app: kafka
+  type: NodePort
+  ports:
+    - name: internal
+      protocol: TCP
+      port: 9092
+      targetPort: 9092
+    - name: controller
+      protocol: TCP
+      port: 9093
+      targetPort: 9093
+    - name: external
+      protocol: TCP
+      port: 30092
+      targetPort: 30092
+      nodePort: 30092
