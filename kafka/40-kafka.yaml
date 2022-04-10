@@ -55,13 +55,6 @@ spec:
           volumeMounts:
             - name: kafka-storage
               mountPath: /var/lib/kafka/data
-          resources:
-            requests:
-              memory: 512M
-              cpu: 0.25
-            limits:
-              memory: 512M
-              cpu: 0.25
 
 ---
 apiVersion: v1

@@ -48,13 +48,6 @@ spec:
           volumeMounts:
             - name: redis-storage
               mountPath: /data
-          resources:
-            requests:
-              memory: 256M
-              cpu: 0.128
-            limits:
-              memory: 256M
-              cpu: 0.128
 
 ---
 apiVersion: v1

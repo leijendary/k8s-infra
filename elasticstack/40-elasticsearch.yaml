@@ -1,56 +1,69 @@
-apiVersion: elasticsearch.k8s.elastic.co/v1
-kind: Elasticsearch
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
   name: elasticsearch
   namespace: elasticstack
   labels:
     app: elasticsearch
 spec:
-  version: 7.10.0
-  nodeSets:
-    - name: master
-      count: 1
-      config:
-        node.store.allow_mmap: false
-        xpack.security.authc:
-          anonymous:
-            username: anonymous
-            roles: superuser
-            authz_exception: false
-      podTemplate:
-        metadata:
-          labels:
-            app: elasticsearch
-        spec:
-          volumes:
+  selector:
+    matchLabels:
+      app: elasticsearch
+  serviceName: elasticsearch-service
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      volumes:
+        - name: elasticsearch-storage
+          persistentVolumeClaim:
+            claimName: elasticsearch-claim
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+          ports:
+            - containerPort: 9200
+            - containerPort: 9300
+          envFrom:
+            - configMapRef:
+                name: elasticsearch-config
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 70
+            timeoutSeconds: 30
+            periodSeconds: 60
+            failureThreshold: 3
+            successThreshold: 1
+          volumeMounts:
             - name: elasticsearch-storage
-              persistentVolumeClaim:
-                claimName: elasticsearch-claim
-          containers:
-            - name: elasticsearch
-              envFrom:
-                - configMapRef:
-                    name: elasticsearch-config
-              volumeMounts:
-                - name: elasticsearch-storage
-                  mountPath: /usr/share/elasticsearch/data
-              resources:
-                requests:
-                  memory: 512M
-                  cpu: 0.25
-                limits:
-                  memory: 1G
-                  cpu: 0.5
-  http:
-    service:
-      spec:
-        type: NodePort
-        ports:
-          - name: client
-            protocol: TCP
-            port: 9200
-            targetPort: 9200
-            nodePort: 30200
-    tls:
-      selfSignedCertificate:
-        disabled: true
+              mountPath: /usr/share/elasticsearch/data
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-service
+  namespace: elasticstack
+spec:
+  selector:
+    app: elasticsearch
+  type: NodePort
+  ports:
+    - name: client
+      protocol: TCP
+      port: 9200
+      targetPort: 9200
+      nodePort: 30200
