@@ -46,22 +46,22 @@ spec:
     app: jaeger
   type: NodePort
   ports:
-    - name: udp1
+    - name: agent-zipkin-compact
       protocol: UDP
       port: 5775
       targetPort: 5775
       nodePort: 30775
-    - name: udp2
+    - name: agent-jaeger-compact
       protocol: UDP
       port: 6831
       targetPort: 6831
       nodePort: 30831
-    - name: udp3
+    - name: agent-jaeger-binary
       protocol: UDP
       port: 6832
       targetPort: 6832
       nodePort: 30832
-    - name: http1
+    - name: agent-serve-config
       protocol: TCP
       port: 5778
       targetPort: 5778
@@ -76,17 +76,17 @@ spec:
       port: 14250
       targetPort: 14250
       nodePort: 30250
-    - name: http2
+    - name: collector-jaeger
       protocol: TCP
       port: 14268
       targetPort: 14268
       nodePort: 30268
-    - name: http2
+    - name: http
       protocol: TCP
       port: 14269
       targetPort: 14269
       nodePort: 30269
-    - name: http3
+    - name: collector-zipkin
       protocol: TCP
       port: 9411
       targetPort: 9411
