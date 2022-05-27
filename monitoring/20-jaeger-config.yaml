@@ -5,3 +5,5 @@ metadata:
   namespace: monitoring
 data:
   COLLECTOR_ZIPKIN_HOST_PORT: ":9411"
+  SPAN_STORAGE_TYPE: elasticsearch
+  ES_SERVER_URLS: elasticsearch-service.elasticstack.svc.cluster.local:9200
