@@ -24,7 +24,7 @@ spec:
             claimName: kafka-claim
       containers:
         - name: kafka
-          image: jleijendekker/kafka:1.1.0
+          image: jleijendekker/kafka:1.0.0-k8s
           ports:
             - containerPort: 9092
             - containerPort: 9093
