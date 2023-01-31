@@ -35,6 +35,7 @@ spec:
             httpGet:
               path: /_cluster/health
               port: 9200
+              scheme: HTTPS
             initialDelaySeconds: 60
             timeoutSeconds: 30
             periodSeconds: 60
@@ -42,6 +43,7 @@ spec:
             httpGet:
               path: /_cluster/health
               port: 9200
+              scheme: HTTPS
             initialDelaySeconds: 70
             timeoutSeconds: 30
             periodSeconds: 60
