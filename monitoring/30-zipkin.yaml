@@ -26,6 +26,22 @@ spec:
           envFrom:
             - configMapRef:
                 name: zipkin-config
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9411
+            initialDelaySeconds: 10
+            timeoutSeconds: 30
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9411
+            initialDelaySeconds: 20
+            timeoutSeconds: 30
+            periodSeconds: 30
+            failureThreshold: 3
+            successThreshold: 1
 
 ---
 apiVersion: v1

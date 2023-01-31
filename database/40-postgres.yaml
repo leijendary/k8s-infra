@@ -43,7 +43,7 @@ spec:
                 - /bin/sh
                 - -c
                 - exec pg_isready -U postgres -h 127.0.0.1 -p 5432
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             timeoutSeconds: 5
             periodSeconds: 3
           livenessProbe:
@@ -52,7 +52,7 @@ spec:
                 - /bin/sh
                 - -c
                 - exec pg_isready -U postgres -h 127.0.0.1 -p 5432
-            initialDelaySeconds: 15
+            initialDelaySeconds: 10
             timeoutSeconds: 5
             periodSeconds: 5
             failureThreshold: 3

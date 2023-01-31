@@ -32,7 +32,7 @@ spec:
               command:
                 - redis-cli
                 - PING
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             timeoutSeconds: 5
             periodSeconds: 3
           livenessProbe:
@@ -40,7 +40,7 @@ spec:
               command:
                 - redis-cli
                 - PING
-            initialDelaySeconds: 20
+            initialDelaySeconds: 10
             timeoutSeconds: 5
             periodSeconds: 5
             failureThreshold: 3
