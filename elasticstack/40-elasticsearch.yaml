@@ -31,11 +31,15 @@ spec:
           envFrom:
             - configMapRef:
                 name: elasticsearch-config
+            - secretRef:
+                name: elasticsearch-secret
           readinessProbe:
             httpGet:
               path: /_cluster/health
               port: 9200
-              scheme: HTTPS
+              httpHeaders:
+                - name: Authorization
+                  value: Basic ZWxhc3RpYzoxMjM0NTY3OA==
             initialDelaySeconds: 60
             timeoutSeconds: 30
             periodSeconds: 60
@@ -43,7 +47,9 @@ spec:
             httpGet:
               path: /_cluster/health
               port: 9200
-              scheme: HTTPS
+              httpHeaders:
+                - name: Authorization
+                  value: Basic ZWxhc3RpYzoxMjM0NTY3OA==
             initialDelaySeconds: 70
             timeoutSeconds: 30
             periodSeconds: 60
