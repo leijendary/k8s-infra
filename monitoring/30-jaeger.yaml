@@ -34,6 +34,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: jaeger-config
+            - secretRef:
+                name: jaeger-secret
 
 ---
 apiVersion: v1
