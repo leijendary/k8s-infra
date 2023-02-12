@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: zipkin-config
-  namespace: monitoring
-data:
-  ES_HOSTS: http://elastic:12345678@elasticsearch-service.elasticstack.svc.cluster.local:9200
