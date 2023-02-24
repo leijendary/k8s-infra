@@ -40,9 +40,9 @@ spec:
               httpHeaders:
                 - name: Authorization
                   value: Basic ZWxhc3RpYzoxMjM0NTY3OA==
-            initialDelaySeconds: 60
+            initialDelaySeconds: 20
             timeoutSeconds: 30
-            periodSeconds: 60
+            periodSeconds: 30
           livenessProbe:
             httpGet:
               path: /_cluster/health
@@ -50,9 +50,9 @@ spec:
               httpHeaders:
                 - name: Authorization
                   value: Basic ZWxhc3RpYzoxMjM0NTY3OA==
-            initialDelaySeconds: 70
+            initialDelaySeconds: 30
             timeoutSeconds: 30
-            periodSeconds: 60
+            periodSeconds: 30
             failureThreshold: 3
             successThreshold: 1
           volumeMounts:
