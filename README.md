@@ -29,12 +29,12 @@ Most used commands for checking the services
 
 1. Check the status of the pods in a given namespace:
 
-   `kubectl get pods --namespace <namespace>`
+   `kubectl get pods -n <namespace>`
 
 2. Get all details of a pod:
 
-   `kubectl describe pods <service> --namespace <namespace>`
+   `kubectl describe pods <service> -n <namespace>`
 
 3. Get logs of a pod:
 
-   `kubectl logs -f <pod name> --namespace <namespace>`
+   `kubectl logs -f <pod name> -n <namespace>`
