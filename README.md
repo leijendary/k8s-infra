@@ -16,6 +16,7 @@ sudo chmod 777 /Volumes/Kubernetes/*
 
 ```
 kubectl apply -f cache
+kubectl apply -f cron
 kubectl apply -f database
 kubectl apply -f elasticstack
 kubectl apply -f kafka
@@ -38,3 +39,16 @@ Most used commands for checking the services
 3. Get logs of a pod:
 
    `kubectl logs -f <pod name> -n <namespace>`
+
+### Cleanup
+
+To remove all services, run the following commands:
+
+```
+kubectl delete -f cache
+kubectl delete -f database
+kubectl delete -f elasticstack
+kubectl delete -f kafka
+kubectl delete -f metrics-server
+kubectl delete -f monitoring
+```

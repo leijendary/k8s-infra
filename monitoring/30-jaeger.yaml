@@ -31,6 +31,8 @@ spec:
             - containerPort: 14268
             - containerPort: 14269
             - containerPort: 9411
+            - containerPort: 4317
+            - containerPort: 4318
           envFrom:
             - configMapRef:
                 name: jaeger-config
@@ -93,3 +95,13 @@ spec:
       port: 9411
       targetPort: 9411
       nodePort: 30411
+    - name: metrics-tracing-grpc
+      protocol: TCP
+      port: 4317
+      targetPort: 4317
+      nodePort: 30317
+    - name: metrics-tracing-http
+      protocol: TCP
+      port: 4318
+      targetPort: 4318
+      nodePort: 30318
