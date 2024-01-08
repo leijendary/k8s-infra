@@ -24,7 +24,7 @@ spec:
             claimName: kafka-claim
       containers:
         - name: kafka
-          image: jleijendekker/kafka:1.0.0-k8s
+          image: confluentinc/cp-kafka:7.5.3
           ports:
             - containerPort: 9092
             - containerPort: 9093
@@ -37,19 +37,19 @@ spec:
               command:
                 - sh
                 - -c
-                - kafka-broker-api-versions.sh --bootstrap-server=localhost:9092
-            initialDelaySeconds: 20
-            timeoutSeconds: 30
-            periodSeconds: 30
+                - kafka-broker-api-versions --bootstrap-server=0.0.0.0:9092
+            initialDelaySeconds: 5
+            timeoutSeconds: 15
+            periodSeconds: 20
           livenessProbe:
             exec:
               command:
                 - sh
                 - -c
-                - kafka-broker-api-versions.sh --bootstrap-server=localhost:9092
+                - kafka-broker-api-versions --bootstrap-server=0.0.0.0:9092
             initialDelaySeconds: 30
-            timeoutSeconds: 30
-            periodSeconds: 30
+            timeoutSeconds: 15
+            periodSeconds: 20
             failureThreshold: 3
             successThreshold: 1
           volumeMounts:
