@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cassandra
+  namespace: database
+  labels:
+    app: cassandra
+spec:
+  selector:
+    matchLabels:
+      app: cassandra
+  serviceName: cassandra-svc
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: cassandra
+    spec:
+      volumes:
+        - name: cassandra-storage
+          persistentVolumeClaim:
+            claimName: cassandra-pvc
+      containers:
+        - name: cassandra
+          image: cassandra:5
+          ports:
+            - containerPort: 9042
+          envFrom:
+            - secretRef:
+                name: cassandra-secret
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - /ready-probe.sh
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 3
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - /ready-probe.sh
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          volumeMounts:
+            - name: cassandra-storage
+              mountPath: /var/lib/cassandra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra-svc
+  namespace: database
+spec:
+  selector:
+    app: cassandra
+  type: LoadBalancer
+  ports:
+    - name: tcp
+      protocol: TCP
+      port: 9042
+      targetPort: 9042

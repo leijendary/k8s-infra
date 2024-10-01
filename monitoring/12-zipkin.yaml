@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zipkin
+  namespace: monitoring
+  labels:
+    app: zipkin
+spec:
+  selector:
+    matchLabels:
+      app: zipkin
+  serviceName: zipkin-svc
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: zipkin
+    spec:
+      containers:
+        - name: zipkin
+          image: openzipkin/zipkin-slim:3
+          ports:
+            - containerPort: 9411
+          envFrom:
+            - configMapRef:
+                name: zipkin-config
+            - secretRef:
+                name: zipkin-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin-svc
+  namespace: monitoring
+spec:
+  selector:
+    app: zipkin
+  type: LoadBalancer
+  ports:
+    - name: tcp
+      protocol: TCP
+      port: 9411
+      targetPort: 9411

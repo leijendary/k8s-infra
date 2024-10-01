@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pgbouncer
+  namespace: database
+  labels:
+    app: pgbouncer
+spec:
+  selector:
+    matchLabels:
+      app: pgbouncer
+  serviceName: pgbouncer-svc
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: pgbouncer
+    spec:
+      containers:
+        - name: pgbouncer
+          image: bitnami/pgbouncer:1
+          ports:
+            - containerPort: 6432
+          envFrom:
+            - configMapRef:
+                name: pgbouncer-config
+            - secretRef:
+                name: pgbouncer-secret
+          readinessProbe:
+            exec:
+              command:
+                - env
+                - PGPASSWORD="$$POSTGRESQL_PASSWORD"
+                - psql -p 6432 -U "$$POSTGRESQL_USERNAME" pgbouncer -c "SHOW VERSION"
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 3
+          livenessProbe:
+            exec:
+              command:
+                - env
+                - PGPASSWORD="$$POSTGRESQL_PASSWORD"
+                - psql -p 6432 -U "$$POSTGRESQL_USERNAME" pgbouncer -c "SHOW VERSION"
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer-svc
+  namespace: database
+spec:
+  selector:
+    app: pgbouncer
+  type: LoadBalancer
+  ports:
+    - name: tcp
+      protocol: TCP
+      port: 6432
+      targetPort: 6432

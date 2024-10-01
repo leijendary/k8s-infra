@@ -4,7 +4,7 @@ metadata:
   name: elasticsearch-config
   namespace: elasticstack
 data:
-  ES_JAVA_OPTS: -Xms2g -Xmx4g
+  ES_JAVA_OPTS: -Xms1g -Xmx2g
   bootstrap.memory_lock: "true"
   discovery.type: single-node
   xpack.security.transport.ssl.enabled: "false"

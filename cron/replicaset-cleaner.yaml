@@ -2,7 +2,6 @@ kind: Namespace
 apiVersion: v1
 metadata:
   name: cron
-
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
@@ -18,7 +17,6 @@ rules:
     verbs:
       - delete
       - get
-
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -33,14 +31,12 @@ roleRef:
   kind: Role
   name: replicaset-cleaner
   apiGroup: ""
-
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: cron
   name: replicaset-cleaner
-
 ---
 apiVersion: batch/v1
 kind: CronJob

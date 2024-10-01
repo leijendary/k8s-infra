@@ -3,13 +3,12 @@
 1. Create volume directories:
 
 ```
-sudo mkdir -p /Volumes/Kubernetes
-sudo mkdir /Volumes/Kubernetes/redis
-sudo mkdir /Volumes/Kubernetes/postgres
-sudo mkdir /Volumes/Kubernetes/elasticsearch
-sudo mkdir /Volumes/Kubernetes/kafka
-
-sudo chmod 777 /Volumes/Kubernetes/*
+sudo mkdir -p /usr/local/k8s
+sudo mkdir /usr/local/k8s/redis
+sudo mkdir /usr/local/k8s/postgres
+sudo mkdir /usr/local/k8s/elasticsearch
+sudo mkdir /usr/local/k8s/kafka
+sudo chmod 777 /usr/local/k8s/*
 ```
 
 2. Apply all services:

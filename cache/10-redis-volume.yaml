@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-vol
+  labels:
+    type: local
+spec:
+  storageClassName: ""
+  claimRef:
+    name: redis-pvc
+    namespace: cache
+  volumeMode: Filesystem
+  capacity:
+    storage: 256M
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /usr/local/k8s/redis
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - docker-desktop
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: cache
+spec:
+  storageClassName: ""
+  volumeName: redis-vol
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256M

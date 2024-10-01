@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: elasticsearch
-  serviceName: elasticsearch-service
+  serviceName: elasticsearch-svc
   replicas: 1
   updateStrategy:
     type: RollingUpdate
@@ -21,10 +21,10 @@ spec:
       volumes:
         - name: elasticsearch-storage
           persistentVolumeClaim:
-            claimName: elasticsearch-claim
+            claimName: elasticsearch-pvc
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
           ports:
             - containerPort: 9200
             - containerPort: 9300
@@ -40,8 +40,8 @@ spec:
               httpHeaders:
                 - name: Authorization
                   value: Basic ZWxhc3RpYzoxMjM0NTY3OA==
-            initialDelaySeconds: 5
-            timeoutSeconds: 15
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
             periodSeconds: 20
           livenessProbe:
             httpGet:
@@ -51,27 +51,25 @@ spec:
                 - name: Authorization
                   value: Basic ZWxhc3RpYzoxMjM0NTY3OA==
             initialDelaySeconds: 30
-            timeoutSeconds: 15
+            timeoutSeconds: 10
             periodSeconds: 20
             failureThreshold: 3
             successThreshold: 1
           volumeMounts:
             - name: elasticsearch-storage
               mountPath: /usr/share/elasticsearch/data
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: elasticsearch-service
+  name: elasticsearch-svc
   namespace: elasticstack
 spec:
   selector:
     app: elasticsearch
-  type: NodePort
+  type: LoadBalancer
   ports:
-    - name: client
+    - name: tcp
       protocol: TCP
       port: 9200
       targetPort: 9200
-      nodePort: 30200

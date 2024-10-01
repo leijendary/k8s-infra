@@ -1,21 +1,21 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: elasticsearch-volume
+  name: kafka-vol
   labels:
     type: local
 spec:
   storageClassName: ""
   claimRef:
-    name: elasticsearch-claim
-    namespace: elasticstack
+    name: kafka-pvc
+    namespace: kafka
   volumeMode: Filesystem
   capacity:
     storage: 1G
   accessModes:
     - ReadWriteOnce
   local:
-    path: /Volumes/Kubernetes/elasticsearch
+    path: /usr/local/k8s/kafka
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -24,16 +24,15 @@ spec:
               operator: In
               values:
                 - docker-desktop
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: elasticsearch-claim
-  namespace: elasticstack
+  name: kafka-pvc
+  namespace: kafka
 spec:
   storageClassName: ""
-  volumeName: elasticsearch-volume
+  volumeName: kafka-vol
   accessModes:
     - ReadWriteOnce
   resources:

@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: postgres
-  serviceName: postgres-service
+  serviceName: postgres-svc
   replicas: 1
   updateStrategy:
     type: RollingUpdate
@@ -21,20 +21,13 @@ spec:
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
-            claimName: postgres-claim
+            claimName: postgres-pvc
       containers:
         - name: postgres
-          image: postgres:15-alpine
+          image: pgvector:pg16
           ports:
             - containerPort: 5432
-          args:
-            - -c
-            - max_connections=1000
-            - -c
-            - shared_buffers=1024MB
           envFrom:
-            - configMapRef:
-                name: postgres-config
             - secretRef:
                 name: postgres-secret
           readinessProbe:
@@ -60,20 +53,18 @@ spec:
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
+  name: postgres-svc
   namespace: database
 spec:
   selector:
     app: postgres
-  type: NodePort
+  type: LoadBalancer
   ports:
-    - name: client
+    - name: tcp
       protocol: TCP
       port: 5432
       targetPort: 5432
-      nodePort: 30432

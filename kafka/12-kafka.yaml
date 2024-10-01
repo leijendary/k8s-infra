@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: kafka
-  serviceName: kafka-service
+  serviceName: kafka-svc
   replicas: 1
   updateStrategy:
     type: RollingUpdate
@@ -21,14 +21,14 @@ spec:
       volumes:
         - name: kafka-storage
           persistentVolumeClaim:
-            claimName: kafka-claim
+            claimName: kafka-pvc
       containers:
         - name: kafka
-          image: confluentinc/cp-kafka:7.5.3
+          image: confluentinc/cp-kafka:7.7.0
           ports:
             - containerPort: 9092
             - containerPort: 9093
-            - containerPort: 30092
+            - containerPort: 9101
           envFrom:
             - configMapRef:
                 name: kafka-config
@@ -55,19 +55,18 @@ spec:
           volumeMounts:
             - name: kafka-storage
               mountPath: /var/lib/kafka/data
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-service
+  name: kafka-svc
   namespace: kafka
 spec:
   selector:
     app: kafka
-  type: NodePort
+  type: LoadBalancer
   ports:
-    - name: internal
+    - name: broker
       protocol: TCP
       port: 9092
       targetPort: 9092
@@ -75,8 +74,7 @@ spec:
       protocol: TCP
       port: 9093
       targetPort: 9093
-    - name: external
+    - name: jmx
       protocol: TCP
-      port: 30092
-      targetPort: 30092
-      nodePort: 30092
+      port: 9101
+      targetPort: 9101
